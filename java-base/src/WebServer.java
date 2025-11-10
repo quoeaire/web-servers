@@ -1,5 +1,3 @@
-package calculator.matrix;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,11 +25,41 @@ public class WebServer {
 
                 File inFile = new File(requestFilePath.substring(1));
 
-                if (inFile.exists())
+                // route /graphSearch expects start= and end= variables
+                if (requestFilePath.equals("/graphSearch"))
+                {
+                    String queryString = exchange.getRequestURI().getQuery();
+                    String startLoc = null, endLoc = null;
+                    for (String element : queryString.split("&")) {
+                        if (element.startsWith("start=")) 
+                            startLoc = element.substring(6);
+
+                        if (element.startsWith("end="))
+                            endLoc = element.substring(4);
+                    }
+                    System.out.println("startLoc: " + startLoc + " --- endLoc: " + endLoc);
+
+                    String placeholderResults = "<h3>Shortest Path (placeholder server)</h3>" 
+                        + "<ul>"
+                        + "\t<li>" + startLoc + "</li>"
+                        + "\t<li>" + "placeholder webserver" + "</li>"
+                        + "\t<li>" + endLoc + "</li>"
+                        + "</ul>";
+
+                    exchange.getResponseHeaders().add("Content-type", "text/html");
+                    // length is the number of bytes (or chars) in the string we are about to send
+                    exchange.sendResponseHeaders(200, placeholderResults.length()); 
+
+                    OutputStream responseStream = exchange.getResponseBody();
+                    responseStream.write(placeholderResults.getBytes());
+                    responseStream.close();
+                }
+                // "route" for assets
+                else if (inFile.exists())
                 {
                     String contextType = "text/html";
-                    if (requestFilePath.endsWith(".css")) contentType = "text/css";
-                    if (requestFilePath.endsWith(".png")) contentType = "image/png";
+                    if (requestFilePath.endsWith(".css")) contextType = "text/css";
+                    if (requestFilePath.endsWith(".png")) contextType = "image/png";
 
                     exchange.getResponseHeaders().add("Content-type" , contextType);
                     exchange.sendResponseHeaders(200, inFile.length());
@@ -39,7 +67,7 @@ public class WebServer {
                     Files.copy(inFile.toPath(), exchange.getResponseBody());
                     exchange.getResponseBody().close();
                 }
-
+                // default route
                 else 
                 {
                     String response = "<p>Hello Web Server...</p>";
