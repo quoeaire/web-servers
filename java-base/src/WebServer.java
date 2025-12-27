@@ -21,7 +21,7 @@ public class WebServer {
             public void handle(HttpExchange exchange) throws IOException {
                 // get path always has a leading slash "/"
                 String requestFilePath = exchange.getRequestURI().getPath();
-                System.out.println("Requeest incoming for:  " + requestFilePath);
+                System.out.println("Request incoming for:  " + requestFilePath);
 
                 File inFile = new File(requestFilePath.substring(1));
 
