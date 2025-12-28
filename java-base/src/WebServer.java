@@ -50,31 +50,26 @@ public class WebServer {
          * ROUTER
         */
         // TODO: direct example from class, should be modified
-        // route /graphSearch expects start= and end= variables
-        if (requestFilePath.equals("/graphSearch"))
+        // route /someRequest expects some "var=data" variables
+        if (requestFilePath.equals("/someRequest"))
         {
+            // the query is the v1=d1&v2=d2 part of the URI/URL
             String queryString = exchange.getRequestURI().getQuery();
-            String startLoc = null, endLoc = null;
-            for (String element : queryString.split("&")) {
-                if (element.startsWith("start=")) 
-                    startLoc = element.substring(6);
+            // some variables for v1, v2, vn here
+            // iterate over each variable and do something with them
+            for (String element : queryString.split("&"));
 
-                if (element.startsWith("end="))
-                    endLoc = element.substring(4);
-            }
-            System.out.println("startLoc: " + startLoc + " --- endLoc: " + endLoc);
+            // build a response string
+            String placeholderResults;
 
-            String placeholderResults = "<h3>Shortest Path (placeholder server)</h3>" 
-                + "<ul>"
-                + "\t<li>" + startLoc + "</li>"
-                + "\t<li>" + "placeholder webserver" + "</li>"
-                + "\t<li>" + endLoc + "</li>"
-                + "</ul>";
-
+            // set the type of response
             exchange.getResponseHeaders().add("Content-type", "text/html");
+            
+            // 200 is code for OK
             // length is the number of bytes (or chars) in the string we are about to send
             exchange.sendResponseHeaders(200, placeholderResults.length()); 
 
+            // send it
             OutputStream responseStream = exchange.getResponseBody();
             responseStream.write(placeholderResults.getBytes());
             responseStream.close();
@@ -157,14 +152,14 @@ public class WebServer {
 	return map;
     }
 
-    // creates a working Frontend, Backend, DijkstraGraph, and HashtableMap
-    private static FrontendInterface createWorkingFrontend(String filename) throws IOException {
-	GraphADT<String,Double> graph = new DijkstraGraph<>();
-	BackendInterface backend = new Backend(graph);
-	backend.loadGraphData(filename);			
-	FrontendInterface frontend = new Frontend(backend);
-	return frontend;
-    }
+    // // creates a working Frontend, Backend, DijkstraGraph, and HashtableMap
+    // private static FrontendInterface createWorkingFrontend(String filename) throws IOException {
+	// GraphADT<String,Double> graph = new DijkstraGraph<>();
+	// BackendInterface backend = new Backend(graph);
+	// backend.loadGraphData(filename);			
+	// FrontendInterface frontend = new Frontend(backend);
+	// return frontend;
+    // }
 
     // creates the html response for the kind of question requested (if any)
     private static String generateResponseHTML(Map<String,String> keyValuePairs, FrontendInterface frontend) {
